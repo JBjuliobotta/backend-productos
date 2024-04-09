@@ -4,10 +4,22 @@ const UserController=require('../controllers/userController');
 const UserRoutes=(base, app)=>{
 
     const controller=new UserController();
-    app.post(`${base}/create`, async(req, res)=>{
+    app.post(`${base}/create-admin`, async(req, res)=>{
         try {
-            const {email, password, role}=req.body;
-            await controller.CreateNewUser(email, password, role);
+            const {email, password}=req.body;
+            await controller.CreateNewAdmin(email, password);
+            return res.status(201).json({message: "{éxito al crear el usuario"});
+        } catch (error) {
+            console.log("error al crear nuevo usuario--", error);
+            return res.status(500).json({message: "ocurrió un error al intentar guardar los cambios"});
+
+        }
+    })
+
+    app.post(`${base}`, async(req, res)=>{
+        try {
+            const {email, password}=req.body;
+            await controller.CreateNewUser(email, password);
             return res.status(201).json({message: "{éxito al crear el usuario"});
         } catch (error) {
             console.log("error al crear nuevo usuario--", error);
