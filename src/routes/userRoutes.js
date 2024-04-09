@@ -1,5 +1,5 @@
 const UserController=require('../controllers/userController');
-
+const Auth=require('../utils/AuthMiddlewares');
 
 const UserRoutes=(base, app)=>{
 
@@ -16,7 +16,7 @@ const UserRoutes=(base, app)=>{
         }
     })
 
-    app.post(`${base}`, async(req, res)=>{
+    app.post(`${base}`,Auth.isAuth, Auth.isAdmin, async(req, res)=>{
         try {
             const {email, password}=req.body;
             await controller.CreateNewUser(email, password);
@@ -39,6 +39,16 @@ const UserRoutes=(base, app)=>{
             return res.status(500).json({message: "ocurrio un error al intentar eliminar un usuario"});
         }
     })
+
+    app.post(`${base}/login`, async(req, res, next)=>{
+        try {
+            const response = await controller.Login(req, res);
+            return response;
+        } catch (error) {
+            next(error);
+        }
+    })
+
 };
 
 module.exports=UserRoutes;
